@@ -14,75 +14,35 @@ var fs = P.promisifyAll(require('fs'));
 var Crawler = require('crawler');
 var debug = require('debug')('mediaarts-db-crawler');
 
+var endpoints = require('./endpoints');
+var converters = require('./converters');
 
-var ANIME_SERIES_ENDPOINT = 'http://mediaarts-db.jp/an/anime_series/';
-
-var converters = {
-  'anime': function() {}
-};
-
-var formatters = {
-  'json': function(results) {
-    return JSON.stringify(results, null, 2);
-  }
-};
 
 var main = function main(argv) {
 
-  var animes = [];
+  var converter = converters[argv.converter];
+  if (!_.isFunction(converter)) {
+    throw new Error('undefined converter: ' + argv.converter);
+  }
 
-  var animeCrawler = function animeCrawler(err, result, $) {
-    if (err) throw err;
-
-    var animeObj = {};
-
-    $('.main > .block').find('table.seriesTbl').each(function() {
-      $(this).find('tr:has(th, td)').each(function() {
-        $(this).find('th').each(function() {
-          var header = $(this).text().trim();
-          var data = $(this).next('td');
-          animeObj[header] = data.text().trim();
-        });
-      });
-    });
-
-    $('.sub > .block').each(function() {
-      var bigHeader = $(this).find('h3').contents().first().text().trim();
-      var numItems = _.parseInt($(this).find('h3 > .number').text(), 10);
-      var headers = $(this).find('table.seriesTbl2 thead th').map(function() {
-        return $(this).text().trim();
-      });
-
-      animeObj[bigHeader] = [];
-
-      $(this).find('table.seriesTbl2 tbody tr:has(td)').each(function() {
-        var entry = {};
-        $(this).find('td').each(function(index) {
-          var header = headers[index];
-          var data = $(this).text().trim();
-          entry[header] = data;
-        });
-        animeObj[bigHeader].push(entry);
-      });
-    });
-
-    console.log(animeObj);
-
-    debug('done.');
-  };
+  var results = [];
 
   var c = new Crawler({
     forceUTF8: true,
-    callback: animeCrawler
+    callback: function(err, result, $) {
+      var obj = converter(err, result, $);
+      if (obj) results.push(obj);
+    },
+    onDrain: function() {
+      console.log(JSON.stringify(results, null, 2));
+      process.exit(0);
+    }
   });
 
-  c.queue([ ANIME_SERIES_ENDPOINT + '14261']);
+  c.queue([ endpoints.ANIME_ENDPOINT + '14261']);
 };
 
 if (require.main === module) {
-  // if (argv._.length < 1)
-  //   throw new Error('Usage: node crawler <outfile> [--converter=<converter>] [--format=<format>]');
-
   main(_.defaults(argv, {
     outfile: argv._[0] || 'animelist.json',
     converter: 'anime',
