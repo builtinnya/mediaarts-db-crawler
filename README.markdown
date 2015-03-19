@@ -2,15 +2,13 @@
 
 A web crawler for [Media Arts Database](http://mediaarts-db.jp/).
 
-## Installation
+## Usage
 
-Using [npm](https://www.npmjs.com/):
+Install dependencies:
 
 ```shell
-npm install --save fuzzlogia
+npm install
 ```
-
-## Usage
 
 To start a crawler:
 
