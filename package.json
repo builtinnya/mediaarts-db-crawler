@@ -1,0 +1,21 @@
+{
+  "name": "mediaarts-db-crawler",
+  "version": "0.0.0",
+  "description": "A web crawler for Media Arts Database",
+  "main": "src/crawler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/crawler",
+    "debug": "DEBUG=* npm start"
+  },
+  "author": "Naoto Yokoyama <builtinnya@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^2.9.14",
+    "crawler": "^0.4.3",
+    "debug": "^2.1.3",
+    "lodash": "^3.5.0",
+    "minimist": "^1.1.1",
+    "superagent": "^1.1.0"
+  }
+}
