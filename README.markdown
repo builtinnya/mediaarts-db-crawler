@@ -13,5 +13,5 @@ npm install
 To start an anime DB crawler:
 
 ```shell
-npm run anime
+make anime
 ```
