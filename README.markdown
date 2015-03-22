@@ -10,14 +10,8 @@ Install dependencies:
 npm install
 ```
 
-To start a crawler:
+To start an anime DB crawler:
 
 ```shell
-npm start
-```
-
-To start a crawler with debugging output:
-
-```shell
-npm run debug
+npm run anime
 ```
