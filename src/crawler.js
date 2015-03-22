@@ -82,7 +82,9 @@ var main = function main(argv) {
     }
   });
 
-  c.queue(requestURIs);
+  requestURIs.forEach(function(uri) {
+    c.queue(uri);
+  });
 };
 
 var usage = function usage() {
