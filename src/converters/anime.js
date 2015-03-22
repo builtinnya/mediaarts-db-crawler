@@ -54,8 +54,8 @@ module.exports = function(err, result, $) {
     uri: uri
   };
 
-  // This will be the seen anime IDs
-  var seenIds = [];
+  // This will be the initial research anime IDs
+  var initialIds = [];
 
   // Extracts the left-side data
   $('.main > .block').find('table.seriesTbl').each(function() {
@@ -70,12 +70,6 @@ module.exports = function(err, result, $) {
     });
   });
 
-  if (!animeObj['アニメシリーズID']) {
-    debug('cannot extract anime series ID for ' + uri);
-  } else {
-    seenIds.push(animeObj['アニメシリーズID']);
-  }
-
   // Extracts the initial research data
   if ($('.main').find('> .moreBlock > .moreContents').length) {
     debug('extracting the initial research data...');
@@ -86,7 +80,7 @@ module.exports = function(err, result, $) {
           var dataElem = $(this).next('td');
           if (header === 'アニメシリーズID') {
             debug('mark as seen: ' + dataElem.text().trim());
-            seenIds.push(dataElem.text().trim());
+            initialIds.push(dataElem.text().trim());
           }
           var extract = extractors[header] ||
                 ($(dataElem).is(':contains("典拠ID")') ? extractors.list : extractors.default);
@@ -171,5 +165,5 @@ module.exports = function(err, result, $) {
     }
   });
 
-  return [ animeObj, 'アニメシリーズID', seenIds ];
+  return [ animeObj, 'アニメシリーズID', initialIds ];
 };
