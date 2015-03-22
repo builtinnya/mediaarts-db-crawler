@@ -16,30 +16,68 @@ var debug = require('debug')('mediaarts-db-crawler');
 
 var endpoints = require('./endpoints');
 var converters = require('./converters');
+var formatters = require('./formatters');
 
 
 var main = function main(argv) {
 
   var converter = converters[argv.converter];
   if (!_.isFunction(converter)) {
-    throw new Error('undefined converter: ' + argv.converter);
+    throw new Error('invalid converter: ' + argv.converter);
+  }
+
+  var formatter = formatters[argv.format];
+  if (!_.isFunction(formatter)) {
+    throw new Error('invalid format: ' + argv.format);
   }
 
   var results = [];
+  var seen = {};
 
   var c = new Crawler({
     forceUTF8: true,
     callback: function(err, result, $) {
-      var obj = converter(err, result, $);
-      if (obj) results.push(obj);
+      if (err) throw err;
+      var r = converter.call(c, err, result, $);
+      var obj = (function() {
+        if (_.isArray(r) && r.length > 0) return r[0];
+        else return r;
+      })();
+      var idKey = (function() {
+        if (_.isArray(r) && r.length > 1) return r[1];
+        else return null;
+      })();
+      var seenIds = (function() {
+        if (_.isArray(r) && r.length > 2) return r[2];
+        else return [];
+      })();
+      if (obj) {
+        if (!seen[obj[idKey]]) {
+          debug('adding object: ' + obj[idKey]);
+          results.push(obj);
+        } else {
+          debug('already seen: ' + obj[idKey]);
+        }
+      } else {
+        debug('no object returned');
+      }
+      seenIds.forEach(function(id) {
+        seen[id] = true;
+      });
     },
     onDrain: function() {
-      console.log(JSON.stringify(results, null, 2));
-      process.exit(0);
+      var content = formatter(results, argv);
+      fs.writeFileAsync(argv.outfile, content)
+        .then(function() {
+          process.exit(0);
+        })
+        .catch(function(err) {
+          throw err;
+        });
     }
   });
 
-  c.queue([ endpoints.ANIME_ENDPOINT + '14261']);
+  c.queue([ endpoints.ANIME_ENDPOINT + '14261', endpoints.ANIME_ENDPOINT + '14262']);
 };
 
 if (require.main === module) {
