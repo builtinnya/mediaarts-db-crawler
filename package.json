@@ -5,7 +5,7 @@
   "main": "src/crawler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "anime": "node src/crawler animedb.json --key='アニメシリーズID' --start=1 --end=1 --step=1 --converter=anime --format=json"
+    "anime": "node src/crawler animedb.json --key='アニメシリーズID' --start=1 --end=18948 --step=1 --converter=anime --format=json"
   },
   "author": "Naoto Yokoyama <builtinnya@gmail.com>",
   "license": "MIT",
