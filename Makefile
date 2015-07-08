@@ -17,7 +17,7 @@ anime:
 	$(CRAWLER_CMD) animedb1.json $(ANIME_OPTS) --start=1 --end=4737
 	$(CRAWLER_CMD) animedb2.json $(ANIME_OPTS) --start=4738 --end=9474
 	$(CRAWLER_CMD) animedb3.json $(ANIME_OPTS) --start=9475 --end=14211
-	$(CRAWLER_CMD) animedb4.json $(ANIME_OPTS) --start=14212 --end=18948
+	$(CRAWLER_CMD) animedb4.json $(ANIME_OPTS) --start=14212 --end=18937
 	$(CONCAT_CMD) animedb1.json animedb2.json animedb3.json animedb4.json \
 		--outfile=animedb.json
 	rm animedb1.json animedb2.json animedb3.json animedb4.json
