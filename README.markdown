@@ -15,3 +15,5 @@ To start an anime DB crawler:
 ```shell
 make anime
 ```
+
+It will produce `animedb.json`.
